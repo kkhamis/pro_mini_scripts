@@ -1,3 +1,6 @@
+//This script is used to test thermistors and uses a real time colock so measurments can be synced with other devices
+
+
 #include "RTClib.h"
 #include <Wire.h>
 
@@ -20,7 +23,10 @@ uint32_t frequency_r = 60; ///sampling frequency in seconds 30 min = 1800, 15 mi
 #define TEMPERATURENOMINAL 25   // temp. for nominal resistance (almost always 25 C)
 #define NUMSAMPLES 5 // N for average
 #define BCOEFFICIENT 3950  // The beta coefficient of the thermistor (usually 3000-4000)r
-#define SERIESRESISTOR 10000    // the value of the 'other' resisto
+#define SERIESRESISTOR 10000    // the value of the 'other' resistor
+#define InternalReferenceConstant 1126400L /// need to change based on the board rail voltage use the rail_Volt_cal 
+///script to find the board specific value https://github.com/kkhamis/pro_mini_scripts/blob/main/Rail_Volt_cal.ino
+
  
 int samples[NUMSAMPLES];
 
@@ -59,6 +65,8 @@ void MeasureTemp(int  THERMISTORPIN){
 }
 
 ///------------------------------------------------------------------------------
+///function to create a clean datatime string
+
 void PrintTime(){
   DateTime now = rtc.now();
     Serial.print(now.year(), DEC);
@@ -82,7 +90,7 @@ void setup() {
 rtc.begin();                                    // start clock
    rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // set clock to time laptop time
      // January 21, 2014 at 3am you would call:
-    rtc.adjust(DateTime(2019, 5, 14, 17, 38, 0));
+    //rtc.adjust(DateTime(2019, 5, 14, 17, 38, 0));
    if (! rtc.begin()) {
     Serial.println("Couldn't find RTC");
     while (1);

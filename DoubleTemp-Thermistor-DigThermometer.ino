@@ -100,10 +100,10 @@ void loop(void) {
 //thermistor
   Serial.print(" Thermistor_pin, ");
   MeasureTemp(THERMISTORPIN);
-    Serial.println( );
 //digital thermometer
  Serial.print(" Digital Thermometer, "); 
  sensors.requestTemperatures(); // Send the command to get temperature readings 
  Serial.print(sensors.getTempCByIndex(0)); // Why "byIndex"?  
+ Serial.println(",");
   delay(1000);
 }

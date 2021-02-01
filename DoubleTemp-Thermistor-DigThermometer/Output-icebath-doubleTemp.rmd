@@ -1,0 +1,115 @@
+---
+title: "Ice bath trails"
+output: html_notebook
+---
+
+```{r, echo=F, message=F }
+rm(list = ls())
+Code='e:/Fellowship/UoB-MarineScotland/Code/'
+
+Ice26=read.csv(paste0(Code,'Icebath-26jan.csv'),stringsAsFactors =  F)
+Ice26$d <-as.POSIXlt(Ice26$Time, format = '%d/%m/%Y %H:%M')
+Ice27=read.csv(paste0(Code,'Icebath_27-28Dec.csv'),stringsAsFactors =  F)
+Ice27$d <-as.POSIXlt(Ice27$Time, format = '%d/%m/%Y %H:%M:%S')
+
+
+```
+
+### Icebath experiment
+From 12:19 27th January until 9:10 28 January
+Sensors are in small plastic tupperware with ice cubes from 12:19 until the next morning.
+
+```{r, echo=FALSE}
+plot(Ice27$d,Ice27$DigitalTherm, col='orange', xlab='Time from 12:19 27th Jan to 9:10 28th Jan', ylab='Temperature (degrees Celcius)')
+points(Ice27$d,Ice27$Thermistor,col='blue')
+points(Ice27$d,Ice27$DigitalTherm,col='orange')
+legend('topleft',c('Digital thermometer','Thermistor'), col=c('orange','blue'),pch=1)
+```
+> Zoom in to a range of -.5 to 1 degree Celcius  
+Cooling of thermometers (mean in plot)
+
+Data selected from -0.1 - 1 degree Celcius
+
+```{r, echo=FALSE}
+#select( Times) # more or less 0-warming up
+library(dplyr)
+
+Tmistor01= Ice27 %>% filter(Thermistor>= -0.1 & Thermistor <=1)
+Tdigital01=Ice27 %>% filter(DigitalTherm>= -.1 & DigitalTherm <=1)
+#summary(Tmistor01$Thermistor)
+#summary(Tdigital01$DigitalTherm)
+
+{
+plot(Tdigital01$d,Tdigital01$DigitalTherm, col='orange', xlab='Time from 12:19 to 16:45 on 27th Jan', ylab='Temperature (degrees Celcius)', ylim=c(-0.1,1.1))
+points(Tmistor01$d,Tmistor01$Thermistor,col='blue')
+# lines(Tmistor01$d,Tmistor01$Thermistor,col='blue')
+legend('topright',c('Digital Thermometer','Thermistor'), col=c('orange','blue'),pch=1)
+text(y=1.1,x=as.POSIXlt('2021-01-27 13:10:00 GMT'),paste('Mean temp. digital thermometer',round(mean(Tdigital01$DigitalTherm),3)))
+text(y=1,x=as.POSIXlt('2021-01-27 13:10:00 GMT'),paste('Mean temp. thermistor',round(mean(Tmistor01$Thermistor),3)))
+
+}
+
+#> look for dT 
+# Tmistor01$diff<- c(0,diff(Tmistor01$Thermistor, lag=1))
+# min(Tmistor01$diff)
+# max(Tmistor01$diff)
+# summary(Tmistor01$diff)
+```
+> Stabilisation period
+Last hours of trail when water temperature is stable.
+From 20:16 27th Jan to 9:10 28th Jan
+
+Data selection from 13.5 - 15.5 degrees Celcius
+
+-note that heating went on at 7:00.!
+
+```{r, echo=FALSE}
+
+Tmistor1415= Ice27 %>% filter(Thermistor>= 13.5 & Thermistor <=15.5)
+Tdigital1415=Ice27 %>% filter(DigitalTherm>= 13.5 & DigitalTherm <=15.5)
+# summary(Tmistor1415$Thermistor)
+# summary(Tdigital1415$DigitalTherm)
+#diff
+Tmistor1415$diff<- c(0,diff(Tmistor1415$Thermistor, lag=1))
+min(Tmistor1415$diff)
+max(Tmistor1415$diff)
+summary(Tmistor1415$diff)
+unique(abs(Tmistor1415$diff)) # step changes (absolute difference between measurements)
+
+Tdigital1415$diff<- c(0,diff(Tdigital1415$DigitalTherm, lag=1))
+min(abs(Tdigital1415$diff))
+max(Tdigital1415$diff)
+summary(Tdigital1415$diff)
+unique(abs(Tdigital1415$diff)) #step change (absolute difference between measurements)
+
+{
+plot(Tdigital1415$d,Tdigital1415$DigitalTherm, col='orange', xlab='Time from 20:16 27th Jan to 9:10 28th Jan', ylab='Temperature (degrees Celcius)', ylim=c(13.3,15.5),cex=0.5)
+points(Tmistor1415$d,Tmistor1415$Thermistor,col='blue')
+# lines(Tmistor01$d,Tmistor01$Thermistor,col='blue')
+legend('topright',c('Digital Thermometer','Thermistor'), col=c('orange','blue'),pch=1)
+text(y=15.2,x=as.POSIXlt('2021-01-27 23:30:00 GMT'),paste('Step change thermistor',round(min(Tmistor1415$diff),3),'-',round(max(Tmistor1415$diff),3)))
+text(y=15.4,x=as.POSIXlt('2021-01-27 23:30:00 GMT'),paste('Step change d.thermometer',round(min(Tdigital1415$diff),3),'-',round(max(Tdigital1415$diff),3)))
+
+}
+
+
+```
+
+Mean values are 14.35 (digital thermometer) and 14.26 (thermistor)
+-- step change is most interesting (shown in plot)
+
+### Follow up:
+> compare the two thermistors and digital signal
+
+or
+
+> compare to tiny tag - compare to reference - calibrated.
+when other thermistor
+
+### Accuracy analogue to digital convertion [in lab]
+> 8bit to 1023 values
+
+
+### Calibrating the sensor [in lab]
+> range of values -15 -  30
+

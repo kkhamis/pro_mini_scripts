@@ -30,7 +30,7 @@ Cooling of thermometers (mean in plot)
 
 Data selected from -0.1 - 1 degree Celcius
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,warning=FALSE}
 #select( Times) # more or less 0-warming up
 library(dplyr)
 
@@ -71,15 +71,17 @@ Tdigital1415=Ice27 %>% filter(DigitalTherm>= 13.5 & DigitalTherm <=15.5)
 # summary(Tdigital1415$DigitalTherm)
 #diff
 Tmistor1415$diff<- c(0,diff(Tmistor1415$Thermistor, lag=1))
-min(Tmistor1415$diff)
-max(Tmistor1415$diff)
-summary(Tmistor1415$diff)
+# min(Tmistor1415$diff)
+# max(Tmistor1415$diff)
+# summary(Tmistor1415$diff)
+print('Absolute step changes thermistor')
 unique(abs(Tmistor1415$diff)) # step changes (absolute difference between measurements)
 
 Tdigital1415$diff<- c(0,diff(Tdigital1415$DigitalTherm, lag=1))
-min(abs(Tdigital1415$diff))
-max(Tdigital1415$diff)
-summary(Tdigital1415$diff)
+# min(abs(Tdigital1415$diff))
+# max(Tdigital1415$diff)
+# summary(Tdigital1415$diff)
+print('Absolute step changes Digital thermometer')
 unique(abs(Tdigital1415$diff)) #step change (absolute difference between measurements)
 
 {
@@ -87,8 +89,8 @@ plot(Tdigital1415$d,Tdigital1415$DigitalTherm, col='orange', xlab='Time from 20:
 points(Tmistor1415$d,Tmistor1415$Thermistor,col='blue')
 # lines(Tmistor01$d,Tmistor01$Thermistor,col='blue')
 legend('topright',c('Digital Thermometer','Thermistor'), col=c('orange','blue'),pch=1)
-text(y=15.2,x=as.POSIXlt('2021-01-27 23:30:00 GMT'),paste('Step change thermistor',round(min(Tmistor1415$diff),3),'-',round(max(Tmistor1415$diff),3)))
-text(y=15.4,x=as.POSIXlt('2021-01-27 23:30:00 GMT'),paste('Step change d.thermometer',round(min(Tdigital1415$diff),3),'-',round(max(Tdigital1415$diff),3)))
+text(y=15.2,x=as.POSIXlt('2021-01-27 23:30:00 GMT'),paste('Step change thermistor 0.02'))
+text(y=15.4,x=as.POSIXlt('2021-01-27 23:30:00 GMT'),paste('Step change d.thermometer 0.06'))
 
 }
 

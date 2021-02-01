@@ -94,7 +94,7 @@ void setup(void)
  Serial.begin(9600); 
  // Start up the library 
  sensors.begin(); 
- Serial.print("DigitalTherm , Thermistor,");
+ Serial.print("Thermistor, DigitalTherm,");
 } 
 
 void loop(void) {

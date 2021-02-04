@@ -19,25 +19,23 @@ uint32_t frequency_r = 60; ///sampling frequency in seconds 30 min = 1800, 15 mi
    // which analog pin for Temp measurement      
 #define THERMISTORNOMINAL 10000   // resistance at 25 degrees C      
 #define TEMPERATURENOMINAL 25   // temp. for nominal resistance (almost always 25 C)
-#define NUMSAMPLES 5 // N for average
 #define BCOEFFICIENT 3435  // The beta coefficient of the thermistor (usually 3000-4000)r
 #define SERIESRESISTOR 10000    // the value of the 'other' resisto
-#define THERMISTORPIN A0 //Thermistor
+#define THERMISTORPIN A0
 
 //introduce second thermometer
 #define ONE_WIRE_BUS 13 //digital thermometer
- 
-int samples[NUMSAMPLES];
-
 //////------------------------------------------------------------
-int MeasureTemp(int  THERMISTORPIN){
+float MeasureTemp(int NUMSAMPLES, int Wait){
+int samples[NUMSAMPLES];
   uint8_t i;
   float average;
   // take N samples in a row, with a slight delay
   for (i=0; i< NUMSAMPLES; i++) {
    samples[i] = analogRead(THERMISTORPIN);
-   delay(10);
+   delay(Wait);
   }
+  
   
   // average all the samples out
   average = 0;
@@ -93,17 +91,35 @@ void setup(void)
  Serial.begin(9600); 
  // Start up the library 
  sensors.begin(); 
- Serial.println("Thermistor, DigitalTherm,");
+ Serial.println("Thermistor5, Thermistor5_wait, Thermistor50, Thermistor50_wait, DigitalTherm,");
 } 
 
-void loop(void) {
+void loop() {
 //thermistor
 //  Serial.print(" Thermistor_pin, ");
-  MeasureTemp(THERMISTORPIN);
+  int NUMSAMPLES_5 = 5;
+  int Wait_10 = 10;
+  float Tmistor5= MeasureTemp( NUMSAMPLES_5, Wait_10);
+      Serial.print(Tmistor5);
+       Serial.print(",  ");
+ //Thermistor 15 samples
+ int Wait_100 = 100;
+  float Tmistor5w = MeasureTemp( NUMSAMPLES_5, Wait_100);
+      Serial.print(Tmistor5w);
+       Serial.print(",  ");
+ //Thermistor with 50 samples
+int NUMSAMPLES_50 = 50;
+float Tmistor50 = MeasureTemp(NUMSAMPLES_50,Wait_10);
+   Serial.print(Tmistor50);
+      Serial.print(",  ");
+ // Thermistor with 100 samples
+float Tmistor50w = MeasureTemp(NUMSAMPLES_50,Wait_100);
+  Serial.print(Tmistor50w);
+     Serial.print(",  ");
 //digital thermometer
 // Serial.print(" Digital Thermometer, "); 
  sensors.requestTemperatures(); // Send the command to get temperature readings 
  Serial.print(sensors.getTempCByIndex(0)); // Why "byIndex"?  
- Serial.println(",");
+Serial.println(",");
   delay(5000);
 }

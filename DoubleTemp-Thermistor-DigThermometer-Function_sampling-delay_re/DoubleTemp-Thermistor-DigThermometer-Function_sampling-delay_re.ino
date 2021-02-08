@@ -123,3 +123,5 @@ float Tmistor50w = MeasureTemp(NUMSAMPLES_50,Wait_100);
 Serial.println(",");
   delay(5000);
 }
+//https://www.arduino.cc/en/Reference/FunctionDeclaration
+//useful website to upgrade functions

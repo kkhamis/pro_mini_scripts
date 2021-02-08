@@ -1,0 +1,169 @@
+---
+title: "Different Sampling numbers"
+output: html_notebook
+---
+
+```{r, echo=F, message=F }
+rm(list = ls())
+Code='e:/Fellowship/UoB-MarineScotland/Code/'
+
+Ice27=read.csv(paste0(Code,'Icebath_27-28Dec.csv'),stringsAsFactors =  F) #27 Jan
+Ice27$d <-as.POSIXct(Ice27$Time, format = '%d/%m/%Y %H:%M:%S')
+Ice_1feb=read.csv(paste0(Code, 'Icebath_3thermistors.csv'),stringsAsFactors = F)
+Ice_1feb$d <-as.POSIXct(Ice_1feb$Time, format = '%d/%m/%Y %H:%M:%S')
+Ice_4feb <- read.csv(paste0(Code,'Icebath-4Feb.csv'),stringsAsFactors = F)
+Ice_4feb$d <-as.POSIXct(Ice_4feb$Time, format = '%d/%m/%Y %H:%M:%S')
+
+# print(Ice_4feb$Time[1:4])
+#  print(Ice_4feb$d[1:4])
+
+```
+### Two short tests with 5, 15, 50, 100 samples without delay (10ms between each sample)
+
+-Ice test with different sampling follow-
+```{r, echo=F}
+S5_100_midday=read.csv(paste0(Code,'Sampling_5-100_midday.csv'),stringsAsFactors = F)
+S5_100_afternoon=read.csv(paste0(Code,'Sampling_5-100_afternoon.csv'),stringsAsFactors = F)
+{
+plot(S5_100_midday$Thermistor, col='blue', ylab='Temperature (degrees Celcius)',xlab='Time steps',type='p',pch=20)
+points(S5_100_midday$Thermistor_15,col='red', pch=20)
+points(S5_100_midday$Thermistor_50,col='green', pch=20)
+points(S5_100_midday$Thermistor_100,col='purple', pch=20)
+lines(S5_100_midday$DigitalTherm,lwd=3)
+legend('topright',c('5 samples','15 samples','50 samples','100 samples','Digital Thermometer'), col=c('blue','red','green','purple','black'),pch=c(rep(20,4),NA),lwd=c(rep(NA,4),3),lty=c(rep(NA,4),2))
+}
+```
+plotted density of diference in $^\circ$C
+```{r, echo=FALSE}
+{
+plot(density(diff(S5_100_midday$Thermistor)),col='blue',ylim=c(0,50),main='Distr. of difference per time step')
+lines(density(diff(S5_100_midday$DigitalTherm)),lty=2)
+lines(density(diff(S5_100_midday$Thermistor_15)),col='red')
+lines(density(diff(S5_100_midday$Thermistor_50)),col='green')
+lines(density(diff(S5_100_midday$Thermistor_100)),col='purple')
+legend('topleft',c('5 samples','15 samples','50 samples','100 samples','Digital Thermometer'), col=c('blue','red','green','purple','black'),lwd=1,lty=c(rep(1,4),2))
+}
+```
+Second test results are similar:
+```{r, echo=FALSE}
+# sd(S5_100_midday$Thermistor) #0.0995
+# sd(S5_100_midday$Thermistor_15) #0.086 
+# sd(S5_100_midday$Thermistor_50) #0.08
+# sd(S5_100_midday$Thermistor_100) #0.079
+# arrows(Tm_1F_5$d,Tm_1F_5$Rmean-sd,Tm_1F_5$d,Tm_1F_5$Rmean+sd, code=3, length=0.02, angle = 90)
+{
+plot(S5_100_afternoon$X5.samples, col='blue', ylab='Temperature (degrees Celcius)',type='p',pch=20)
+points(S5_100_afternoon$X15.samples,col='red', pch=20)
+points(S5_100_afternoon$X50.samples, col='green', pch=20)
+points(S5_100_afternoon$X100.samples,col='purple', pch=20)
+lines(S5_100_afternoon$DigitalTherm,lwd=3)
+legend('topright',c('5 samples','15 samples','50 samples','100 samples','Digital Thermometer'), col=c('blue','red','purple','green','black'),pch=c(rep(20,4),NA),lwd=c(rep(NA,4),3),lty=c(rep(NA,4),2))
+}
+{
+plot(density(diff(S5_100_afternoon$X5.samples)),col='blue',ylim=c(0,50),'Distr. of difference per time step')
+lines(density(diff(S5_100_afternoon$X15.samples)),col='red')
+lines(density(diff(S5_100_afternoon$X50.samples)),col='green')
+lines(density(diff(S5_100_afternoon$X100.samples)),col='purple')
+lines(density(diff(S5_100_afternoon$DigitalTherm)),lty=2)
+legend('topleft',c('5 samples','15 samples','50 samples','100 samples','Digital thermometer'), col=c('blue','red','green','purple','black'),lty=c(rep(1,4),2),lwd=1)
+}
+#Same result for both short tests
+# {
+#   plot(density(diff(S5_100_midday$Thermistor)),col='blue',ylim=c(0,23))
+# lines(density(diff(S5_100_midday$Thermistor_15)),col='red')
+# lines(density(diff(S5_100_midday$Thermistor_50)),col='purple')
+# lines(density(diff(S5_100_midday$Thermistor_100)),col='green')
+# lines(density(diff(S5_100_afternoon$X5.samples)),col='blue',lty=2)
+# lines(density(diff(S5_100_afternoon$X15.samples)),col='red',lty=2)
+# lines(density(diff(S5_100_afternoon$X50.samples)),col='purple',lty=2)
+# lines(density(diff(S5_100_afternoon$X100.samples)),col='green',lty=2)
+# }
+```
+### Ice tests
+
+Plot shows that different ice tests on different days result in the same step change.
+
+```{r, echo=FALSE}
+#jan
+Tmistor1415= Ice27 %>% filter(Thermistor>= 13.5 & Thermistor <=15.5)
+Tdigital1415=Ice27 %>% filter(DigitalTherm>= 13.5 & DigitalTherm <=15.5)
+
+# summary(Tmistor1415$diff)
+# summary(Tdigital1415$diff)
+
+#feb 1st : Thermistor -delay; 5 samples
+#         Thermistor 15 samples
+# head(Ice_1feb)
+Tm_1F_5= Ice_1feb %>% filter(Thermistor>= 14.5 & Thermistor <=15)
+Tm_1F_5$Rmean= c(Tm_1F_5$Thermistor[1:2],zoo::rollmean(Tm_1F_5$Thermistor,3,align='center'))
+Tm_1F_5delay= Ice_1feb %>% filter(Thermistor_Delay>= 14.5 & Thermistor_Delay <=15)
+Tm_1F_15= Ice_1feb %>% filter(Thermistor_15>= 14.5 & Thermistor_15 <=15)
+Tm_1F_15delay= Ice_1feb %>% filter(Thermistor_15Delay>= 14.5 & Thermistor_15Delay <=15)
+Tm_4F_5= Ice_4feb %>% filter(Thermistor5>= 14.5 )
+Tm_4F_5delay= Ice_4feb %>% filter(Thermistor5_wait>= 14.5 )
+Tm_4F_50= Ice_4feb %>% filter(Thermistor50>= 14.5 )
+Tm_4F_50delay= Ice_4feb %>% filter(Thermistor50_wait>= 14.5 )
+Td_4F=Ice_4feb %>% filter(DigitalTherm>= 14.5 )
+
+#second thermistor 5 samples
+TM2_1F_5=Ice_1feb %>% filter(X2ndThermistor>= 14.5 & X2ndThermistor <=15)
+TM2_1F_5delay=Ice_1feb %>% filter(X2ndThermistor_Delay>= 14.5 & X2ndThermistor_Delay <=15)
+TM2_1F_15delay=Ice_1feb %>% filter(X2ndThermistor15Delay>= 14.5 & X2ndThermistor15Delay <=15)
+Td_1F= Ice_1feb%>%  filter(DigitalTherm>= 14.5 & DigitalTherm <=15)
+
+##to double-check if 14.4 - 15 degrees captures the stable period
+# plot(Tm_1F_15delay$Thermistor_15, col='blue')
+# lines(TM2_1F_5$X2ndThermistor, col='red')
+# lines(Td_1F$DigitalTherm, col='orange')
+# plot(Tm_4F_5$Thermistor5, col='green')
+
+#do different test give same precision?
+{
+plot(density(diff(Tm_1F_5$Thermistor, lag=1)),col='blue', ylim=c(0,90), main='Distribution of time step difference',xlim=c(-0.1,0.1))
+lines(density(diff(Td_1F$DigitalTherm, lag=1)), col='orange')
+points(density(diff(Tmistor1415$Thermistor,lag=1)),col='blue')
+points(density(diff(Tdigital1415$DigitalTherm,lag=1)),col='orange')
+lines(density(diff(Tm_4F_5$Thermistor5,lag=1)), col='blue',lty=2)
+lines(density(diff(Td_4F$DigitalTherm,lag=1)), col='orange',lty=2)
+legend('topleft',c('Thermistor - 27 Jan','D. Thermometer - 27 Jan',
+                   'Thermistor - 1 feb','D. Thermometer -1 Feb','Thermistor 4 Feb','D. Thermometer 4 Feb')
+       ,lty=c(NA,NA,1,1,2,2),pch=c(1,1,NA,NA,NA,NA),lwd=c(NA,NA,1,1,1,1),col=c('blue','orange'))
+}
+#test for improvements with delay
+```
+Signal becomes more smooth with increased samples. 
+```{r,echo=FALSE}
+Tm_4F_5$rollmean= c(Tm_4F_5$Thermistor5[1:2],zoo::rollmean( Tm_4F_5$Thermistor5,3))
+{
+par(mfrow=c(2,1),mar=c( 2, 5,0.1, 2) + 0.1)
+plot(Tm_4F_5$d, Tm_4F_5$Thermistor5, col='blue', ylab='Temperature \n(degrees Celcius)',type='b',ylim=c(14.5,16.5))
+points(Tm_4F_50$d, Tm_4F_50$Thermistor50,col='green', cex=0.5)
+legend('topright',c('5 samples','50 samples'),col=c('blue','green'),pch=1)
+
+##add plot with rolling mean > 5 samples
+plot(Tm_4F_5$d, Tm_4F_5$Thermistor5, col='blue',ylab='Temperature \n(degrees Celcius)', type='b',ylim=c(14.5,16.5))
+lines(Tm_4F_5$d,Tm_4F_5$rollmean,lwd=3,col='grey')
+# points(Tm_4F_50$d, Tm_4F_50$Thermistor50,col='green', cex=0.5)
+legend('topright',c('5 samples','rolling mean (3 time steps)'),col=c('blue','grey'),pch=c(1,NA),lwd=c(NA,1),lty=c(NA,1))
+}
+
+```
+
+Distribution plots for 5, 15, 50 samples (with and without 90ms delay)
+```{r, echo=FALSE}
+{
+  par(mar=c(2, 4,2, 2) + 0.1)
+plot(density(diff(Tdigital1415$DigitalTherm,lag=1)), ylim=c(0,120), main='Distr. of time step difference: 5,15,50 samples with/without delay',xlim=c(-0.1,0.1))
+lines(density(diff(Tm_1F_5$Thermistor,lag=1)),col='blue')
+lines(density(diff(Tm_1F_5delay$Thermistor_Delay)), col='blue',lty=2)
+lines(density(diff(Tm_1F_15$Thermistor_15,lag=1)),col='red')
+lines(density(diff(Tm_1F_15delay$Thermistor_15Delay,lag=1)),col='red', lty=2)
+lines(density(diff(Tm_4F_50$Thermistor50,lag=1)),col='green')
+lines(density(diff(Tm_4F_50delay$Thermistor50_wait,lag=1)), lty=2,col='green')
+legend('topleft',c('Thermistor #5','Thermistor #5 delayed',
+                   'Thermistor #15','Thermistor #15 delayed',
+                   'Thermistor #50','Thermistor #50 delayed','Digital Thermometer')
+       ,lty=c(1,2),lwd=1,col=c('blue','blue','red','red','green','green','black'))
+}
+```
+

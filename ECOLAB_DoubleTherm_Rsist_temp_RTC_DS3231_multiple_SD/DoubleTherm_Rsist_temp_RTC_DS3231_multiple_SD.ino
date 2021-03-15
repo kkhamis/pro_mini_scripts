@@ -10,7 +10,7 @@
 
 RTC_DS1307 rtc; 
 DateTime now;
-
+//#define LED 3 // bright light when recording
 
 ///--------------------------------------DATA headers for SD card-------------------------------------------------
 const char codebuild[] PROGMEM = __FILE__;  // loads the compiled source code directory & filename into a varaible
@@ -51,6 +51,7 @@ void PrintTime(){
     Serial.print(",");
  //--------------------------------------------------------------------------------   
 }
+
 
 void setup() {
   // the following pullup resistors only needs to be enabled for the ProMini builds - not the UNO loggers
@@ -102,7 +103,6 @@ void setup() {
   else {
      Serial.println("error opening datalog.txt"); // if the file isn’t open, pop up an error:
   }
-
 }
 
 //replace if below with
@@ -174,6 +174,7 @@ void loop() {
   DateTime now = rtc.now();
   PrintTime();
   sprintf(CycleTimeStamp, "%04d/%02d/%02d %02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute());
+
 int NUMSAMPLES_25 = 25;
  float T6_Rsist_25= MeasureResist(NUMSAMPLES_25, THERMISTORPIN6);
  float T6_Temp_25 = MeasureTemp( NUMSAMPLES_25, THERMISTORPIN6);

@@ -189,7 +189,11 @@ int NUMSAMPLES_25 = 25;
   float T6_Rsist_25= MeasureResist(NUMSAMPLES_25, THERMISTORPIN6);
  float T6_Temp_25 = MeasureTemp( NUMSAMPLES_25, THERMISTORPIN6);
   Serial.print(",  ");
- Serial.print(T1_Rsist_25);
+ Serial.print(T1_Temp_25);
+   Serial.print(",  ");
+ Serial.print(T2_Temp_25);
+   Serial.print(",  "); 
+Serial.print(T6_Temp_25);
 Serial.println(",");
 //=========concatenate data into a string =====================
 // Add each piece of information to the string that gets written to the SD card with:dataFile.println(dataString);

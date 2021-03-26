@@ -57,8 +57,6 @@ void setup() {
   // the following pullup resistors only needs to be enabled for the ProMini builds - not the UNO loggers
   pinMode(chipSelect, OUTPUT); digitalWrite(chipSelect, HIGH); //ALWAYS pullup the ChipSelect pin with the SD library
   pinMode(3, OUTPUT);  digitalWrite(3, HIGH);///POWER UP 3.3v out
-  pinMode(A1,INPUT);
-  pinMode(A2,INPUT);
   pinMode(A6,INPUT);
   
   delay(500);
@@ -182,32 +180,19 @@ void loop() {
   sprintf(CycleTimeStamp, "%04d/%02d/%02d %02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute());
 
 int NUMSAMPLES_25 = 25;
- float T1_Rsist_25= MeasureResist(NUMSAMPLES_25, THERMISTORPIN1);
- float T1_Temp_25 = MeasureTemp( NUMSAMPLES_25, THERMISTORPIN1);
- float T2_Rsist_25= MeasureResist(NUMSAMPLES_25, THERMISTORPIN2);
- float T2_Temp_25 = MeasureTemp( NUMSAMPLES_25, THERMISTORPIN2);
   float T6_Rsist_25= MeasureResist(NUMSAMPLES_25, THERMISTORPIN6);
  float T6_Temp_25 = MeasureTemp( NUMSAMPLES_25, THERMISTORPIN6);
   Serial.print(",  ");
- Serial.print(T1_Temp_25);
+ Serial.print(T6_Rsist_25);
    Serial.print(",  ");
- Serial.print(T2_Temp_25);
-   Serial.print(",  "); 
-Serial.print(T6_Temp_25);
+ Serial.print(T6_Temp_25);
 Serial.println(",");
+ delay(10);
 //=========concatenate data into a string =====================
 // Add each piece of information to the string that gets written to the SD card with:dataFile.println(dataString);
 String dataString = ""; //this line simply erases the string
 dataString = dataString + CycleTimeStamp;
 dataString = dataString + ", ";     //separate data with a comma so they can be imported to separate collumns in a spreadsheet
-dataString = dataString + String(T1_Rsist_25);  //this only gives you two decimal places
-dataString = dataString + ", "; 
-dataString = dataString + String(T1_Temp_25);
-dataString = dataString + ", ";
-dataString = dataString + String(T2_Rsist_25);
-dataString = dataString + ", ";
-dataString = dataString + String(T2_Temp_25);
-dataString = dataString + ", ";
 dataString = dataString + String(T6_Rsist_25);
 dataString = dataString + ", ";
 dataString = dataString + String(T6_Temp_25);
@@ -215,7 +200,7 @@ dataString = dataString + ", ";
 //========== Now write the data to the SD card ===========
 // open the file. note that only one file can be open at a time,
 // so you have to close this one before opening another.
-  File dataFile = SD.open("DATA00.CSV", FILE_WRITE);
+  File dataFile = SD.open("Data00.CSV", FILE_WRITE);
 
   // if the file is available, write to it:
   if (dataFile) {

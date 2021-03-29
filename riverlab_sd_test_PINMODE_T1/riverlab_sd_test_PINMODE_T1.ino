@@ -27,8 +27,6 @@ const int chipSelect = 14; ///AO on riverlab board is 14
 #define BCOEFFICIENT 3435  // The beta coefficient of the thermistor (usually 3000-4000)r
 #define SERIESRESISTOR 10000    // the value of the 'other' resisto
 
-#define THERMISTORPIN1 A1 //T4
-#define THERMISTORPIN2 A2 //T5
 #define THERMISTORPIN6 A6 //T0
 
 
